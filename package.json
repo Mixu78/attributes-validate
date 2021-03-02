@@ -1,0 +1,40 @@
+{
+	"name": "@rbxts/attributes-validate",
+	"version": "1.0.0",
+	"description": "Package for validating instance attributes",
+	"main": "out/init.lua",
+	"scripts": {
+		"prepublishOnly": "rm -r ./out && rbxtsc --type package",
+		"test-setup": "rm -r ./out && rbxtsc --type game && rojo build -o Tests.rbxlx",
+		"test": "npm run test-setup && run-in-roblox --place ./Tests.rbxlx --script ./out/testRunner.server.lua"
+	},
+	"keywords": [],
+	"author": "Mixu_78",
+	"license": "ISC",
+	"publishConfig": {
+		"access": "public"
+	},
+	"types": "out/index.d.ts",
+	"devDependencies": {
+		"@rbxts/compiler-types": "^1.0.0-beta.16.1",
+		"@rbxts/services": "^1.1.2",
+		"@rbxts/testez": "^0.3.1-ts.6",
+		"@rbxts/types": "^1.0.459",
+		"@typescript-eslint/eslint-plugin": "^4.16.1",
+		"@typescript-eslint/parser": "^4.16.1",
+		"eslint": "^7.21.0",
+		"eslint-config-prettier": "^8.1.0",
+		"eslint-plugin-jsdoc": "^32.2.0",
+		"eslint-plugin-prettier": "^3.3.1",
+		"eslint-plugin-roblox-ts": "^0.0.24",
+		"prettier": "^2.2.1",
+		"typescript": "^4.2.2"
+	},
+	"dependencies": {
+		"@rbxts/t": "^2.1.1"
+	},
+	"files": [
+		"out/init.lua",
+		"out/index.d.ts"
+	]
+}
