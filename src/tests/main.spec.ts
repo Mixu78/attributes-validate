@@ -6,6 +6,7 @@ import validate, { SupportedTypes, validateWithMessage } from "..";
 
 //very dumb way to type this
 const TYPE_CREATORS: { [K in SupportedTypes]: () => t.static<t[K]> } = {
+	nil: () => undefined,
 	string: () => "",
 	boolean: () => true,
 	number: () => 0,
@@ -115,6 +116,23 @@ export = () => {
 			expect(validate(instance, attributes)).to.be.ok();
 			instance.SetAttribute("foo", TYPE_CREATORS["number"]());
 			expect(validate(instance, attributes)).to.be.ok();
+		});
+
+		it("should support nil type", () => {
+			const attribute = "foo";
+			const ttype = "nil";
+
+			instance.SetAttribute(attribute, TYPE_CREATORS[ttype]());
+			expect(validate(instance, attribute, ttype)).to.be.ok();
+		});
+
+		it("should support nil union types", () => {
+			const attribute = "foo";
+			const union = ["number", "nil"] as const;
+			instance.SetAttribute(attribute, TYPE_CREATORS[union[0]]());
+			expect(validate(instance, attribute, union)).to.be.ok();
+			instance.SetAttribute(attribute, TYPE_CREATORS[union[1]]());
+			expect(validate(instance, attribute, union)).to.be.ok();
 		});
 	});
 

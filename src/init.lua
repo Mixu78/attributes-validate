@@ -20,13 +20,11 @@ local function validate(instance: Instance, attributes: string | table, t: strin
 	if typeof(attributes) == "string" then
 		if typeof(t) == "string" then
 			local attribute = instance:GetAttribute(attributes)
-			if attribute == nil then return false end
 			if typeof(attribute) ~= t then
 				return false
 			end
 		elseif typeof(t) == "table" then
 			local attribute = instance:GetAttribute(attributes)
-			if attribute == nil then return false end
 
 			local attributeType = typeof(attribute)
 			local ok = false
@@ -43,13 +41,11 @@ local function validate(instance: Instance, attributes: string | table, t: strin
 		for name: string, type: string | array<string> in pairs(attributes) do
 			if typeof(type) == "string" then
 				local attribute = instance:GetAttribute(name)
-				if attribute == nil then return false end
 				if typeof(attribute) ~= type then
 					return false
 				end
 			elseif typeof(type) == "table" then
 				local attribute = instance:GetAttribute(name)
-				if attribute == nil then return false end
 
 				local attributeType = typeof(attribute)
 
@@ -62,7 +58,6 @@ local function validate(instance: Instance, attributes: string | table, t: strin
 				end
 				if not ok then return false end
 			else
-				--TODO format error
 				error(INVALID_ATTRIBUTE:format(name, "string | table", typeof(type)))
 			end
 		end

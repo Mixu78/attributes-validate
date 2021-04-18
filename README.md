@@ -23,7 +23,7 @@ validate(instance: Instance, attributes: Record<string, SupportedType | Supporte
 validateWithMessage(...): [false, string] | [true]
 ```
 
-where `SupportedType` is one of the types listed on the [roblox developer hub](https://developer.roblox.com/en-us/articles/instance-attributes#supported-types) as a string, for example
+where `SupportedType` is `"nil"` or one of the types listed on the [roblox developer hub](https://developer.roblox.com/en-us/articles/instance-attributes#supported-types) as a string, for example
 `"UDim2"`, 
 `"boolean"`, 
 `"string"`.
@@ -52,10 +52,10 @@ if (validate(instance, instanceAttributes)) {
 	//instance.GetAttribute("color") is now of type Color3
 }
 
-const unionType = ["string", "number"];
+const unionType = ["string", "number", "nil"];
 instance.SetAttribute("union", 10);
 if (validate(instance, "union", unionType)) {
-	//instance.GetAttribute("union") is now of type string | number
+	//instance.GetAttribute("union") is now of type string | number | undefined
 }
 
 const [valid, msg] = validateWithMessage(instance, "baz", "UDim2");

@@ -1,4 +1,5 @@
 export type Validatable = {
+	nil: undefined;
 	string: string;
 	boolean: boolean;
 	number: number;
