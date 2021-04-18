@@ -14,10 +14,10 @@ Both validate and validateWithMessage work the same:
 
 ```ts
 //For a single attribute
-validate(instance: Instance, attribute: string, type: SupportedType): boolean
+validate(instance: Instance, attribute: string, type: SupportedType | SupportedType[]): boolean
 
 //For multiple attributes
-validate(instance: Instance, attributes: Record<string, SupportedType>): boolean
+validate(instance: Instance, attributes: Record<string, SupportedType | SupportedType[]>): boolean
 
 //validateWithMessage takes the same parameters and has the same overloads as above
 validateWithMessage(...): [false, string] | [true]
@@ -50,6 +50,12 @@ if (validate(instance, instanceAttributes)) {
 	//instance.GetAttribute("foo") is now of type string
 	//instance.GetAttribute("baz") is now of type number
 	//instance.GetAttribute("color") is now of type Color3
+}
+
+const unionType = ["string", "number"];
+instance.SetAttribute("union", 10);
+if (validate(instance, "union", unionType)) {
+	//instance.GetAttribute("union") is now of type string | number
 }
 
 const [valid, msg] = validateWithMessage(instance, "baz", "UDim2");
