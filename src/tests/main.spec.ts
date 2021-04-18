@@ -82,6 +82,40 @@ export = () => {
 
 			expect(validate(instance, wrongAttributes)).to.be.equal(false);
 		});
+
+		it("should support single union attributes", () => {
+			const attribute = "foo";
+			const attributes = [
+				["string", "number"],
+				["boolean", "Vector3"],
+				["Rect", "NumberSequence"],
+			] as const;
+
+			for (const union of attributes) {
+				for (const ttype of union) {
+					instance.SetAttribute(attribute, TYPE_CREATORS[ttype]());
+					expect(validate(instance, attribute, union)).to.be.ok();
+				}
+			}
+		});
+
+		it("should support union attribute types with multiple attributes", () => {
+			const attributes = {
+				foo: ["string", "number"],
+				bar: "Vector3",
+			} as const;
+
+			for (const [attribute, value] of pairs(attributes)) {
+				if (typeIs(value, "string")) {
+					instance.SetAttribute(attribute, TYPE_CREATORS[value]());
+				}
+			}
+			instance.SetAttribute("foo", TYPE_CREATORS["string"]());
+
+			expect(validate(instance, attributes)).to.be.ok();
+			instance.SetAttribute("foo", TYPE_CREATORS["number"]());
+			expect(validate(instance, attributes)).to.be.ok();
+		});
 	});
 
 	describe("with-message validation", () => {

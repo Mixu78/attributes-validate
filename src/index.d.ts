@@ -18,13 +18,29 @@ export type AddAttribute<T, A, V> = {
 	GetAttribute(this: T, attribute: A): V;
 } & T;
 
-export type AddAttributes<T, A extends { [key: string]: keyof Validatable }> = {
-	GetAttribute(this: T, attribute: keyof A): Validatable[A[keyof A]];
-} & T;
+export type AddAttributes<T, A extends Attributes> = MakeAttributeFunctions<AttributeFunctionsUnion<T, A>> & T;
 
 export type SupportedTypes = keyof Validatable;
 
-type Attributes = { [key: string]: SupportedTypes };
+type Attributes = { readonly [key: string]: SupportedTypes | readonly SupportedTypes[] };
+
+//eslint-disable-next-line @typescript-eslint/no-explicit-any
+type UnionToIntersection<U> = (U extends any ? (K: U) => void : never) extends (K: infer I) => void ? I : never;
+
+//eslint-disable-next-line @typescript-eslint/no-explicit-any
+type MakeAttributeFunctions<T extends (...args: any[]) => any> = {
+	GetAttribute: UnionToIntersection<T>;
+};
+
+type ResolveAttributes<A extends SupportedTypes | readonly SupportedTypes[]> = A extends SupportedTypes
+	? Validatable[A]
+	: A extends readonly SupportedTypes[]
+	? Validatable[A[number]]
+	: never;
+
+type AttributeFunctionsUnion<T, A extends Attributes> = {
+	[K in keyof A]: (this: T, attribute: K) => ResolveAttributes<A[K]>;
+}[keyof A];
 
 /**
  * Checks if instance has an attribute named as expected and it's type matches expected type
@@ -35,11 +51,11 @@ type Attributes = { [key: string]: SupportedTypes };
  *
  * @returns A tuple of either [false, errorMessage] or [true]
  */
-export function validateWithMessage<I extends Instance, A extends string, T extends SupportedTypes>(
-	instance: I,
-	attribute: A,
-	type: T,
-): [false, string] | [true];
+export function validateWithMessage<
+	I extends Instance,
+	A extends string,
+	T extends SupportedTypes | readonly SupportedTypes[]
+>(instance: I, attribute: A, type: T): [false, string] | [true];
 
 /**
  * Checks if instance has all attributes named as expected and their types matches expected types
@@ -63,11 +79,19 @@ export function validateWithMessage<I extends Instance, A extends Attributes>(
  *
  * @returns A boolean indicating if the attribute exists and is of expected type
  */
-export default function validate<I extends Instance, A extends string, T extends SupportedTypes>(
+export default function validate<
+	I extends Instance,
+	A extends string,
+	T extends SupportedTypes | readonly SupportedTypes[]
+>(
 	instance: I,
 	attribute: A,
 	type: T,
-): instance is AddAttribute<I, A, Validatable[T]>;
+): instance is AddAttribute<
+	I,
+	A,
+	T extends SupportedTypes ? Validatable[T] : T extends readonly SupportedTypes[] ? Validatable[T[number]] : never
+>;
 
 /**
  * Checks if instance has all attributes named as expected and their types matches expected types
@@ -79,5 +103,5 @@ export default function validate<I extends Instance, A extends string, T extends
  */
 export default function validate<I extends Instance, A extends Attributes>(
 	instance: I,
-	attribute: A,
+	attributes: A,
 ): instance is AddAttributes<I, A>;
