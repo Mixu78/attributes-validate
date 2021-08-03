@@ -98,13 +98,17 @@ local function validateWithMessage(instance: Instance, attributes: string | tabl
 		for name: string, type: string | array<string> in pairs(attributes) do
 			if typeof(type) == "string" then
 				local attribute = instance:GetAttribute(name)
-				if attribute == nil then return false end
+				if attribute == nil then 
+					return nilAttribute(name)
+				end
 				if typeof(attribute) ~= type then
 					return invalidAttribute(name, type, typeof(attribute))
 				end
 			elseif typeof(type) == "table" then
 				local attribute = instance:GetAttribute(name)
-				if attribute == nil then return false end
+				if attribute == nil then 
+					return nilAttribute(name)
+				end
 
 				local attributeType = typeof(attribute)
 
