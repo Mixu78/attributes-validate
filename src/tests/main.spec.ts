@@ -152,5 +152,14 @@ export = () => {
 			expect(ok).to.be.ok();
 			expect(msg).to.never.be.ok();
 		});
+
+		it("should support nil attributes", () => {
+			const [ok] = validateWithMessage(instance, "a", "nil");
+			expect(ok).to.be.ok();
+
+			instance.SetAttribute("a", 0);
+			const [ok2] = validateWithMessage(instance, "a", "nil");
+			expect(ok2).to.be.equal(false);
+		});
 	});
 };
