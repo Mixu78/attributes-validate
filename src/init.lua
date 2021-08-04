@@ -27,14 +27,11 @@ local function validate(instance: Instance, attributes: string | table, t: strin
 			local attribute = instance:GetAttribute(attributes)
 
 			local attributeType = typeof(attribute)
-			local ok = false
 			for _, expected in pairs(t) do
 				if attributeType == expected then
-					ok = true
-					break
+					return false
 				end
 			end
-			if not ok then return false end
 		end
 		return true
 	else
@@ -49,14 +46,11 @@ local function validate(instance: Instance, attributes: string | table, t: strin
 
 				local attributeType = typeof(attribute)
 
-				local ok = false
 				for _, expected in pairs(type) do
 					if attributeType == expected then
-						ok = true
-						break
+						return false
 					end
 				end
-				if not ok then return false end
 			else
 				error(INVALID_ATTRIBUTE:format(name, "string | table", typeof(type)))
 			end
@@ -82,15 +76,10 @@ local function validateWithMessage(instance: Instance, attributes: string | tabl
 		elseif typeof(t) == "table" then
 			local attribute = instance:GetAttribute(attributes)
 			local attributeType = typeof(attribute)
-			local ok = false
 			for _, expected in pairs(t) do
 				if attributeType == expected then
-					ok = true
-					break
+					return invalidAttribute(attributes, table.concat(t, " | "), typeof(attribute))
 				end
-			end
-			if not ok then
-				return invalidAttribute(attributes, table.concat(t, " | "), typeof(attribute))
 			end
 		end
 		return { true }
@@ -112,15 +101,10 @@ local function validateWithMessage(instance: Instance, attributes: string | tabl
 
 				local attributeType = typeof(attribute)
 
-				local ok = false
 				for _, expected in pairs(type) do
 					if attributeType == expected then
-						ok = true
-						break
+						return invalidAttribute(name, table.concat(type, " | "), typeof(attribute))
 					end
-				end
-				if not ok then
-					return invalidAttribute(name, table.concat(type, " | "), typeof(attribute))
 				end
 			else
 				error(INVALID_ATTRIBUTE:format(name, "string | table", typeof(type)))
